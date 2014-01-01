@@ -1,0 +1,22 @@
+<%= content_tag :div, :class => "graph", :id => "graph" + id.to_s do %>
+  <p class="title"><%= title %> <%= content_tag :span, "", :class => "unit" %></p>
+  <div class="border">
+  </div>
+  <p class="value">
+    <%= content_tag :span, "", :class => "value" %> <%= unit %>
+  </p>
+<% end %>
+<script>
+  $(function() {
+      var graph = new Graph({
+          parent_element: $("#graph" + <%= id.to_s %>),
+          value: "<%= value.to_s %>",
+          unit: "<%= unit.to_s %>",
+          from: "<%= from.to_s %>",
+          to: "<%= to.to_s %>",
+          rangefrom: "<%= rangefrom.to_s %>",
+          rangeto: "<%= rangeto.to_s %>"
+      });
+      graph.didInsertElement();
+  });
+</script>

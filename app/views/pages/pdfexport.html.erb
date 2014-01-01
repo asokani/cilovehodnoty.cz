@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Cílové hodnoty</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <%= content_tag :link, "", :rel => "stylesheet", :href => @assets_root + "8530da31.app.min.css" %>
+  <%= content_tag :script, "", :src => @assets_root + "jquery.min.js" %>
+  <%= content_tag :script, "", :src => @assets_root + "bootstrap.min.js" %>
+</head>
+
+<body>
+<script>
+    var Graph = function(hash) {
+        this.to = hash.to;
+        this.from = hash.from;
+        this.parent_element = hash.parent_element;
+        this.rangeto = hash.rangeto;
+        this.rangefrom = hash.rangefrom;
+        this.value = hash.value;
+        this.unit = hash.unit;
+    };
+    Graph.prototype = {
+        didInsertElement: function() {
+            if (this.unit !== "") {
+                this.parent_element.find(".unit").html("("+this.unit+")");
+            }
+            var element;
+            element = $("<div class='valid'></div>");
+            this.parent_element.find(".border").append(element);
+            element.css("bottom", this.numberToPosition(this.rangefrom) - 4);
+            element.css("height", this.numberToPosition(this.rangeto - this.rangefrom));
+
+            var from = parseInt(this.from, 10);
+            var to = parseInt(this.to, 10);
+            var value;
+            if (this.value === undefined || this.value === "") {
+                value = 0;
+            } else {
+                value = parseFloat(this.value.replace(",", "."));
+            }
+            for (var a = from; a <= to; a += to/10) {
+                element = $("<div class='line'></div>");
+                this.parent_element.find(".border").append(element);
+                element.css("left", 15);
+                element.css("width", 6);
+                element.css("bottom", this.numberToPosition(a));
+            }
+            element = $("<div class='number'>" + from + "</div>");
+            this.parent_element.find(".border").append(element);
+
+            element = $("<div class='number'>" + to + "</div>");
+            this.parent_element.find(".border").append(element);
+            element.css("bottom", this.numberToPosition(to) - 10);
+
+            element = $("<div class='bar'></div>");
+            this.parent_element.find(".border").append(element);
+            var height = this.numberToPosition(value);
+            if (height > this.parent_element.find(".border").height()-2) {
+                height = this.parent_element.find(".border").height()-2;
+            }
+            element.css("height", height);
+
+            if (value >= this.rangefrom && value <= this.rangeto) {
+                element.addClass("ok");
+            } else {
+                element.addClass("bad");
+            }
+            this.parent_element.find(".value span").html(value);
+        },
+        numberToPosition: function(number) {
+            return number * (this.parent_element.find(".border").height()-20)/this.to + 10;
+        }
+    }
+</script>
+<div>
+  <div class="container">
+    <div class="row">
+      <h1>Cílové hodnoty</h1>
+
+      <div class="graphs clearfix">
+        <%= render partial: "graph", locals: {id: 1, title: "Glykémie na lačno", unit: "mmol/l", from:"0", to:"10", rangefrom:"4", rangeto:"6", value: @glykemieNalacno } %>
+        <%= render partial: "graph", locals: {id: 2, title: "HbA1c dle IFCC", unit: "%", from:"0", to:"10", rangefrom:"0", rangeto:"4.5", value:@hba1c } %>
+        <%= render partial: "graph", locals: {id: 3, title: "Celkový cholesterol", unit: "mmol/l", from:"0", to:"10", rangefrom:"0", rangeto:"4.5", value:@cholesterolCelkem } %>
+        <%= render partial: "graph", locals: {id: 4, title: "HDL cholesterol", unit: "mmol/l", from:"0", to:"10", rangefrom:"1.1", rangeto:"10", value:@cholesterolHdl } %>
+        <%= render partial: "graph", locals: {id: 5, title: "LDL cholesterol", unit: "mmol/l", from:"0", to:"10", rangefrom:"0", rangeto:"2.5", value:@cholesterolLdl } %>
+        <%= render partial: "graph", locals: {id: 6, title: "Triacylglyceroly", unit: "mmol/l", from:"0", to:"10", rangefrom:"0", rangeto:"1.6", value:@triacyglyceroly } %>
+        <%= render partial: "graph", locals: {id: 7, title: "BMI", unit: "", from:"0", to:"100", rangefrom:@bmiFrom, rangeto:@bmiTo, value:@bmi } %>
+        <%= render partial: "graph", locals: {id: 8, title: "Krevní tlak diastolický", unit: "mmHg", from:"0", to:"200", rangefrom:"0", rangeto:"130", value:@tlakDiastolicky } %>
+        <%= render partial: "graph", locals: {id: 9, title: "Krevní tlak systolický", unit: "mmHg", from:"0", to:"200", rangefrom:"0", rangeto:"80", value:@tlakSystolicky } %>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
